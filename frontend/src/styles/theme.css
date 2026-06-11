@@ -1,0 +1,8 @@
+:root {
+  --emotion-positive: #22c55e;
+  --emotion-negative: #ef4444;
+  --emotion-neutral: #94a3b8;
+  --surface-elevated: #ffffff;
+  --surface-muted: #f8fafc;
+  --border-soft: rgba(15, 23, 42, 0.08);
+}

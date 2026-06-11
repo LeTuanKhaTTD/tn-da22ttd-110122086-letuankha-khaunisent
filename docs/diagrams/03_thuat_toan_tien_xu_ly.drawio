@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-06-08T00:00:00.000Z" agent="TikUniSent-Codex" version="24.7.5" type="device"><diagram id="preprocess" name="03 Thuat toan tien xu ly">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" page="1" pageWidth="1200" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="t" value="Thuat toan tien xu ly comment" style="text;html=1;fontSize=24;fontStyle=1;strokeColor=none;fillColor=none" vertex="1" parent="1"><mxGeometry x="390" y="30" width="420" height="40" as="geometry" /></mxCell>
+        <mxCell id="n1" value="Input: comment raw" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1" vertex="1" parent="1"><mxGeometry x="500" y="90" width="200" height="50" as="geometry" /></mxCell>
+        <mxCell id="n2" value="1. Xoa @username" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="160" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n3" value="2. Xoa URL" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="220" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n4" value="3. Xoa so dien thoai" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="280" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n5" value="4. Decode HTML entities" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="340" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n6" value="5. Chuan hoa ky tu lap toi da 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="400" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n7" value="6. Xoa ky tu noise" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="460" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="n8" value="7. Chuan hoa khoang trang" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="500" y="520" width="200" height="45" as="geometry" /></mxCell>
+        <mxCell id="d1" value="8. Emoji-only?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706" vertex="1" parent="1"><mxGeometry x="500" y="585" width="200" height="80" as="geometry" /></mxCell>
+        <mxCell id="d2" value="9. Do dai &lt; 3?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706" vertex="1" parent="1"><mxGeometry x="500" y="690" width="200" height="80" as="geometry" /></mxCell>
+        <mxCell id="d3" value="10. Trung lap?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706" vertex="1" parent="1"><mxGeometry x="820" y="690" width="200" height="80" as="geometry" /></mxCell>
+        <mxCell id="drop" value="Loai khoi queue gan nhan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1" vertex="1" parent="1"><mxGeometry x="170" y="650" width="220" height="70" as="geometry" /></mxCell>
+        <mxCell id="keep" value="Output: comment sach + text_original" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1" vertex="1" parent="1"><mxGeometry x="820" y="570" width="220" height="70" as="geometry" /></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="n1" target="n2" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="n2" target="n3" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="n3" target="n4" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="n4" target="n5" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="n5" target="n6" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="n6" target="n7" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="n7" target="n8" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="n8" target="d1" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="d1" target="drop" value="Co" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="d1" target="d2" value="Khong" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="d2" target="drop" value="Co" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="d2" target="d3" value="Khong" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="d3" target="drop" value="Co" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="d3" target="keep" value="Khong" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  </mxfile>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-06-08T00:00:00.000Z" agent="TikUniSent-Codex" version="24.7.5" type="device"><diagram id="labeling" name="04 Gan nhan va retrain">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" page="1" pageWidth="1200" pageHeight="850">
+      <root>
+        <mxCell id="0" /><mxCell id="1" parent="0" />
+        <mxCell id="t" value="Luong gan nhan thu cong va fine-tune tiep" style="text;html=1;fontSize=24;fontStyle=1;strokeColor=none;fillColor=none" vertex="1" parent="1"><mxGeometry x="330" y="30" width="560" height="40" as="geometry" /></mxCell>
+        <mxCell id="a" value="File crawl Apify moi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04" vertex="1" parent="1"><mxGeometry x="70" y="130" width="190" height="70" as="geometry" /></mxCell>
+        <mxCell id="b" value="Merge vao master&#10;bo qua duplicate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a" vertex="1" parent="1"><mxGeometry x="330" y="130" width="210" height="70" as="geometry" /></mxCell>
+        <mxCell id="c" value="Backup master truoc merge" style="shape=cylinder3d;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="330" y="250" width="210" height="80" as="geometry" /></mxCell>
+        <mxCell id="d" value="Build label queue&#10;chi lay unlabeled" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9333ea" vertex="1" parent="1"><mxGeometry x="620" y="130" width="210" height="70" as="geometry" /></mxCell>
+        <mxCell id="e" value="Tien xu ly queue&#10;loai ngan / trung" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9333ea" vertex="1" parent="1"><mxGeometry x="900" y="130" width="210" height="70" as="geometry" /></mxCell>
+        <mxCell id="f" value="PhoBERT goi y nhan" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626" vertex="1" parent="1"><mxGeometry x="900" y="280" width="210" height="70" as="geometry" /></mxCell>
+        <mxCell id="g" value="Nguoi dung duyet&#10;positive / neutral / negative" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7" vertex="1" parent="1"><mxGeometry x="620" y="280" width="210" height="80" as="geometry" /></mxCell>
+        <mxCell id="h" value="Gop vao master + train&#10;method = manual" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1" vertex="1" parent="1"><mxGeometry x="330" y="440" width="230" height="80" as="geometry" /></mxCell>
+        <mxCell id="i" value="Export train manual JSON" style="shape=cylinder3d;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="620" y="440" width="220" height="90" as="geometry" /></mxCell>
+        <mxCell id="j" value="Fine-tune PhoBERT tiep" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1" vertex="1" parent="1"><mxGeometry x="900" y="440" width="210" height="80" as="geometry" /></mxCell>
+        <mxCell id="k" value="Model moi duoc danh gia&#10;Accuracy, Macro F1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669" vertex="1" parent="1"><mxGeometry x="900" y="600" width="210" height="80" as="geometry" /></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="a" target="b" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="b" target="c" style="endArrow=block;html=1;dashed=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="b" target="d" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="d" target="e" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="e" target="f" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="f" target="g" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="g" target="h" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="h" target="i" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="i" target="j" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="j" target="k" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  </mxfile>

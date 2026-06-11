@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-06-08T00:00:00.000Z" agent="TikUniSent-Codex" version="24.7.5" type="device"><diagram id="channel-operation" name="06 Van hanh phan tich kenh">
+    <mxGraphModel dx="1500" dy="950" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" value="Cach van hanh phan tich tong kenh TikTok" style="text;html=1;fontSize=24;fontStyle=1;strokeColor=none;fillColor=none" vertex="1" parent="1"><mxGeometry x="390" y="30" width="540" height="40" as="geometry" /></mxCell>
+        <mxCell id="start" value="Start" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1" vertex="1" parent="1"><mxGeometry x="80" y="120" width="100" height="50" as="geometry" /></mxCell>
+        <mxCell id="input" value="Nhap username kenh&#10;max_videos, comments_per_video" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1" vertex="1" parent="1"><mxGeometry x="240" y="105" width="220" height="80" as="geometry" /></mxCell>
+        <mxCell id="validate" value="Validate input&#10;kiem tra Apify token" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706" vertex="1" parent="1"><mxGeometry x="530" y="100" width="190" height="90" as="geometry" /></mxCell>
+        <mxCell id="videos" value="Apify crawl danh sach video cua kenh&#10;lay video_id, url, caption, views, likes, shares, saves, time, cover, music" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04;fontStyle=1" vertex="1" parent="1"><mxGeometry x="790" y="90" width="330" height="110" as="geometry" /></mxCell>
+        <mxCell id="loop" value="Lap qua tung video" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1" vertex="1" parent="1"><mxGeometry x="520" y="270" width="210" height="80" as="geometry" /></mxCell>
+        <mxCell id="comments" value="Crawl comment cua video&#10;gioi han comments_per_video" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef9c3;strokeColor=#ca8a04" vertex="1" parent="1"><mxGeometry x="790" y="270" width="260" height="75" as="geometry" /></mxCell>
+        <mxCell id="normalize" value="Chuan hoa record comment&#10;text, author, likes, cid, created_at, video_id" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9333ea" vertex="1" parent="1"><mxGeometry x="790" y="390" width="260" height="80" as="geometry" /></mxCell>
+        <mxCell id="preprocess" value="Tien xu ly comment&#10;loai noise / ngan / trung" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f3e8ff;strokeColor=#9333ea" vertex="1" parent="1"><mxGeometry x="790" y="510" width="260" height="75" as="geometry" /></mxCell>
+        <mxCell id="infer" value="PhoBERT inference theo batch&#10;tra sentiment + confidence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626;fontStyle=1" vertex="1" parent="1"><mxGeometry x="790" y="630" width="260" height="75" as="geometry" /></mxCell>
+        <mxCell id="videoSummary" value="Tong hop cap video&#10;positive / neutral / negative&#10;avg_confidence, top comments" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a" vertex="1" parent="1"><mxGeometry x="470" y="630" width="250" height="90" as="geometry" /></mxCell>
+        <mxCell id="storeVideo" value="Luu vao videos_result[]" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#f8fafc;strokeColor=#475569" vertex="1" parent="1"><mxGeometry x="210" y="630" width="210" height="75" as="geometry" /></mxCell>
+        <mxCell id="allDone" value="Con video chua xu ly?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706" vertex="1" parent="1"><mxGeometry x="230" y="440" width="210" height="90" as="geometry" /></mxCell>
+        <mxCell id="aggregate" value="Tong hop cap kenh&#10;overall_summary = summarize(all_comments)&#10;total_videos, total_comments, channel_info" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;fontStyle=1" vertex="1" parent="1"><mxGeometry x="80" y="260" width="300" height="100" as="geometry" /></mxCell>
+        <mxCell id="response" value="Response JSON cho frontend&#10;channel_info + overall_summary + videos[]" style="shape=document;whiteSpace=wrap;html=1;boundedLbl=1;fillColor=#dbeafe;strokeColor=#2563eb;fontStyle=1" vertex="1" parent="1"><mxGeometry x="80" y="60" width="300" height="80" as="geometry" /></mxCell>
+        <mxCell id="frontend" value="Frontend hien thi&#10;KPI tong kenh&#10;bieu do cam xuc&#10;bang tung video&#10;chi tiet comment moi video" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;fontStyle=1" vertex="1" parent="1"><mxGeometry x="520" y="30" width="270" height="120" as="geometry" /></mxCell>
+        <mxCell id="error" value="Tra loi loi tieng Viet&#10;token thieu, timeout, khong co du lieu" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fee2e2;strokeColor=#dc2626" vertex="1" parent="1"><mxGeometry x="530" y="200" width="220" height="70" as="geometry" /></mxCell>
+        <mxCell id="end" value="End" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;fontStyle=1" vertex="1" parent="1"><mxGeometry x="860" y="40" width="100" height="50" as="geometry" /></mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" target="input" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="input" target="validate" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="validate" target="videos" value="Hop le" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="validate" target="error" value="Loi" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="videos" target="loop" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="loop" target="comments" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="comments" target="normalize" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="normalize" target="preprocess" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="preprocess" target="infer" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="infer" target="videoSummary" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="videoSummary" target="storeVideo" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="storeVideo" target="allDone" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="allDone" target="loop" value="Co" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="allDone" target="aggregate" value="Khong" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="aggregate" target="response" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="response" target="frontend" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="frontend" target="end" style="endArrow=block;html=1;strokeWidth=2"><mxGeometry relative="1" as="geometry" /></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

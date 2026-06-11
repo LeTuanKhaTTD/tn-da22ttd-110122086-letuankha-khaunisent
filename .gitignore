@@ -1,0 +1,47 @@
+﻿# env
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/.env
+frontend/.env.local
+
+# Data
+data/raw/
+data/processed/
+data/backup/
+data/labeled/
+data/*.json
+dataset_*.json
+
+# Models
+models/*
+!models/README.md
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.zip
+
+# Reports / personal files
+reports/
+backups/
+*.pdf
+*.pptx
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
