@@ -3,19 +3,18 @@ import { Form, Slider, Space, Tooltip } from 'antd';
 import type { FormProps } from 'antd';
 import { useEffect } from 'react';
 import Button from '@/components/ui/Button';
-import { Input, PasswordInput } from '@/components/ui/Input';
+import { Input } from '@/components/ui/Input';
 import type { VideoAnalysisPayload } from '@/types/analysis';
 
 interface VideoFormProps {
   loading?: boolean;
   initialValues?: Partial<VideoAnalysisPayload>;
-  apifyConfigured?: boolean;
   onSubmit: (values: VideoAnalysisPayload) => void | Promise<void>;
 }
 
 interface VideoFormValues extends VideoAnalysisPayload {}
 
-export default function VideoForm({ loading = false, initialValues, apifyConfigured = false, onSubmit }: VideoFormProps) {
+export default function VideoForm({ loading = false, initialValues, onSubmit }: VideoFormProps) {
   const [form] = Form.useForm<VideoFormValues>();
 
   useEffect(() => {
@@ -23,15 +22,18 @@ export default function VideoForm({ loading = false, initialValues, apifyConfigu
       max_comments: 50,
       model: 'phobert',
       ...initialValues,
-      apify_token: apifyConfigured ? undefined : initialValues?.apify_token,
+      apify_token: '',
     });
-  }, [form, initialValues, apifyConfigured]);
+  }, [form, initialValues]);
 
   const handleValuesChange: FormProps<VideoFormValues>['onValuesChange'] = () => undefined;
 
   return (
     <Form form={form} layout="vertical" onFinish={onSubmit} onValuesChange={handleValuesChange}>
       <Form.Item name="model" hidden initialValue="phobert">
+        <Input />
+      </Form.Item>
+      <Form.Item name="apify_token" hidden initialValue="">
         <Input />
       </Form.Item>
 
@@ -45,17 +47,6 @@ export default function VideoForm({ loading = false, initialValues, apifyConfigu
       >
         <Input placeholder="https://www.tiktok.com/@.../video/..." allowClear />
       </Form.Item>
-
-      {!apifyConfigured ? (
-        <Form.Item
-          label="Apify Token tạm thời"
-          name="apify_token"
-          rules={[{ required: true, message: 'Backend chưa có APIFY_API_TOKEN, hãy nhập token tạm thời' }]}
-          extra="Khuyến nghị: cấu hình APIFY_API_TOKEN trong .env backend để không nhập token trên giao diện."
-        >
-          <PasswordInput placeholder="apify_api_xxx" visibilityToggle={false} allowClear autoComplete="off" />
-        </Form.Item>
-      ) : null}
 
       <Form.Item
         label={

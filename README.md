@@ -31,16 +31,14 @@ models/     Local model placeholder
 ## Backend
 
 ```bash
-cd backend
-pip install -r requirements.txt
-python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000
+cd D:\Do_an_tot_nghiep\TikUniSent
+.\.venv\Scripts\python.exe -m uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ## Frontend
 
 ```bash
-cd frontend
-npm install
+cd D:\Do_an_tot_nghiep\TikUniSent\frontend
 npm run dev
 ```
 

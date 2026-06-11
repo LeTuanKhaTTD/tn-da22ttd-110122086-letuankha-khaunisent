@@ -71,7 +71,7 @@ export default function ChannelAnalyzePage() {
                   </Tag>
                   <Tag color="blue">Crawl kênh trực tiếp</Tag>
                   <Tag color={health?.apify_configured ? 'green' : 'orange'}>
-                    {health?.apify_configured ? 'Apify bảo mật ở backend' : 'Cần token tạm thời'}
+                    {health?.apify_configured ? 'Apify bảo mật ở backend' : 'Thiếu APIFY_API_TOKEN trong .env'}
                   </Tag>
                   <Tag color={health?.gemini_enabled ? 'gold' : 'default'}>Gemini chỉ dùng để so sánh</Tag>
                 </Space>
@@ -91,7 +91,7 @@ export default function ChannelAnalyzePage() {
         </div>
         <div className="analysis-form-wrap">
           <Typography.Text className="analysis-section-label">Thông tin đầu vào</Typography.Text>
-          <ChannelForm loading={mutation.isPending} initialValues={reanalyzePayload} apifyConfigured={Boolean(health?.apify_configured)} onSubmit={handleSubmit} />
+          <ChannelForm loading={mutation.isPending} initialValues={reanalyzePayload} onSubmit={handleSubmit} />
         </div>
       </Card>
 
