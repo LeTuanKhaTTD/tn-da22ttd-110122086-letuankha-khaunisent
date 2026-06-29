@@ -1,0 +1,15 @@
+SENTIMENT_LABELS = ['positive', 'negative', 'neutral']
+
+SENTIMENT_COLORS = {
+    'positive': '#22c55e',
+    'negative': '#ef4444',
+    'neutral': '#94a3b8',
+}
+
+MAX_COMMENTS_PER_VIDEO = 500
+MAX_VIDEOS_PER_CHANNEL = 50
+CHANNEL_METADATA_VIDEO_LIMIT = 1000
+MIN_COMMENT_LENGTH = 3
+MAX_SEQUENCE_LENGTH = 256
+BATCH_SIZE = 32
+CACHE_EXPIRY_DAYS = 7

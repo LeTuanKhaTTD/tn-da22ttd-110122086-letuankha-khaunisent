@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!src/.env.example
 
 # Python
 __pycache__/
@@ -16,29 +17,52 @@ frontend/dist/
 frontend/.vite/
 frontend/.env
 frontend/.env.local
+src/frontend/node_modules/
+src/frontend/dist/
+src/frontend/.vite/
+src/frontend/.env
+src/frontend/.env.local
 
-# Data
+# Data goc trong qua trinh phat trien
+# Ban nop chinh thuc duoc dat trong src/data va khong bi ignore.
 data/raw/
 data/processed/
 data/backup/
 data/labeled/
+data/export/
 data/*.json
 dataset_*.json
+!src/data/**/*.json
+!src/data/**/*.xlsx
 
 # Models
+# Khong dua weight lon len GitHub. Doc huong dan trong models/README.md va src/models/README.md.
 models/*
 !models/README.md
+!src/models/README.md
 *.safetensors
 *.bin
 *.pt
 *.pth
 *.zip
 
-# Reports / personal files
+# Graduation documents
+# Chi commit tai lieu ban nop trong docs, tranh trung file o root.
 reports/
 backups/
 *.pdf
 *.pptx
+*.docx
+*.ipynb
+confusion_matrix_phobert.png
+training_history_phobert.png
+TU
+!docs/**/*.pdf
+!docs/**/*.pptx
+!docs/**/*.docx
+!docs/**/*.png
+!docs/**/*.md
+!src/**/*.ipynb
 
 # OS / IDE
 .vscode/
