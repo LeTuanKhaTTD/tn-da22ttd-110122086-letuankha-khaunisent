@@ -69,3 +69,12 @@ TU
 .idea/
 .DS_Store
 Thumbs.db
+
+# Root duplicates - official submission structure is docs/ and src/
+backend/
+frontend/
+scripts/
+data/
+models/
+.env.example
+requirements-train.txt
