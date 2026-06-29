@@ -66,6 +66,7 @@ interface RawChannelResponse {
   status?: string;
   username?: string;
   channel_info?: ChannelAnalysisResponse['channel_info'];
+  analysis_scope?: ChannelAnalysisResponse['analysis_scope'];
   total_videos?: number;
   total_comments?: number;
   overall_summary?: RawSummaryResponse;
@@ -150,6 +151,7 @@ function normalizeChannelResponse(data: RawChannelResponse): ChannelAnalysisResp
       distribution: summaryToDistribution(data.overall_summary),
     },
     channel_info: data.channel_info,
+    analysis_scope: data.analysis_scope,
   };
 }
 

@@ -6,6 +6,8 @@ from pathlib import Path
 
 import httpx
 
+from backend.app.core.constants import CHANNEL_METADATA_VIDEO_LIMIT
+
 APIFY_BASE_URL = 'https://api.apify.com/v2'
 VIDEO_ACTOR_SLUG = 'clockworks~tiktok-scraper'
 COMMENTS_ACTOR_SLUG = 'clockworks~tiktok-comments-scraper'
@@ -241,7 +243,7 @@ def _extract_video_metadata(video: dict) -> dict:
     }
 
 
-def _extract_channel_info(username: str, items: List[dict], videos: List[dict]) -> dict:
+def _extract_channel_info(username: str, items: List[dict], videos: List[dict], analyzed_count: int | None = None) -> dict:
     first = items[0] if items else {}
     normalized = _normalize_username(username)
     total_likes = sum(_to_int(video.get('likes')) for video in videos)
@@ -259,7 +261,8 @@ def _extract_channel_info(username: str, items: List[dict], videos: List[dict]) 
         'followers': _pick_int(first, ('fans', 'followers', 'followerCount', 'authorMeta.fans')),
         'following': _pick_int(first, ('following', 'followingCount')),
         'likes': _pick_int(first, ('heart', 'heartCount', 'totalLikes')) or total_likes,
-        'posts_analyzed': len(videos),
+        'posts_analyzed': analyzed_count if analyzed_count is not None else len(videos),
+        'posts_collected': len(videos),
         'total_views': total_views,
         'total_likes': total_likes,
         'total_shares': total_shares,
@@ -299,11 +302,14 @@ def load_channel_comments_from_local(username: str, max_videos: int = 20, commen
     videos = source.get('videos', []) if isinstance(source, dict) else []
 
     selected = []
+    matching_metadata = []
     for video in videos:
         if not isinstance(video, dict):
             continue
         if not _video_matches_username(video, username):
             continue
+
+        matching_metadata.append(_extract_video_metadata(video))
 
         video_comments = video.get('comments', []) if isinstance(video.get('comments', []), list) else []
         comments = []
@@ -334,7 +340,8 @@ def load_channel_comments_from_local(username: str, max_videos: int = 20, commen
     return {
         'total_videos': len(selected),
         'total_comments': total_comments,
-        'channel_info': _extract_channel_info(username, videos, selected),
+        'metadata_videos_collected': len(matching_metadata),
+        'channel_info': _extract_channel_info(username, videos, matching_metadata, len(selected)),
         'videos': selected,
     }
 
@@ -402,9 +409,10 @@ async def crawl_channel_comments(username: str, apify_token: str, max_videos: in
     if not username:
         raise ValueError('Username không được để trống')
 
+    metadata_limit = max(int(max_videos), CHANNEL_METADATA_VIDEO_LIMIT)
     payload = {
         'profiles': [_normalize_profile(username)],
-        'resultsPerPage': max_videos,
+        'resultsPerPage': metadata_limit,
     }
 
     run_data = await _create_run(VIDEO_ACTOR_SLUG, payload, apify_token)
@@ -418,6 +426,13 @@ async def crawl_channel_comments(username: str, apify_token: str, max_videos: in
         raise ApifyError('Không tìm thấy dataset ID từ Apify run')
 
     items = await _get_dataset_items(dataset_id, apify_token)
+
+    metadata_videos = []
+    for item in items:
+        video_url = _extract_video_url(item)
+        if not video_url:
+            continue
+        metadata_videos.append(_extract_video_metadata(item))
 
     videos = []
     for item in items[:max_videos]:
@@ -456,6 +471,7 @@ async def crawl_channel_comments(username: str, apify_token: str, max_videos: in
     return {
         'total_videos': len(videos),
         'total_comments': total_comments,
-        'channel_info': _extract_channel_info(username, items, videos),
+        'metadata_videos_collected': len(metadata_videos),
+        'channel_info': _extract_channel_info(username, items, metadata_videos, len(videos)),
         'videos': videos,
     }

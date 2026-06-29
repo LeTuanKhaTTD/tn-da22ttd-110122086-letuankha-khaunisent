@@ -1,4 +1,4 @@
-import { DashboardOutlined, PlayCircleOutlined, PieChartOutlined, SettingOutlined, TagsOutlined } from '@ant-design/icons';
+﻿import { DashboardOutlined, PlayCircleOutlined, PieChartOutlined, SettingOutlined, TagsOutlined } from '@ant-design/icons';
 import { Badge, Layout, Menu, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -47,10 +47,10 @@ export default function Sidebar() {
       className="app-sidebar"
     >
       <div className="brand">
-        <div className="brand-mark">SV</div>
+        <div className="brand-mark">KU</div>
         <div className="brand-copy">
           <Typography.Title level={4} className="brand-title">
-            TikUniSent
+            KhaUniSent
           </Typography.Title>
           <Typography.Paragraph className="brand-subtitle">
             Phân tích cảm xúc TikTok tiếng Việt
@@ -77,3 +77,4 @@ export default function Sidebar() {
     </Layout.Sider>
   );
 }
+

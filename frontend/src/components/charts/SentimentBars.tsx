@@ -61,7 +61,8 @@ export default function SentimentBars({ videos }: SentimentBarsProps) {
     );
 
     return {
-      label: `Video ${index + 1}: ${video.video_id}`,
+      label: `Video ${index + 1}`,
+      videoId: video.video_id,
       ...normalized,
     };
   });

@@ -12,12 +12,35 @@ export interface HealthResponse {
     model_path?: string;
     model_name?: string;
     fine_tuned_on?: string;
+    train_sources?: string[];
+    dataset_size?: number;
+    max_len?: number;
+    epochs?: number;
     best_val_macro_f1?: number;
     test_accuracy?: number;
+    test_f1_weighted?: number;
     test_f1_macro?: number;
     train_size?: number;
     val_size?: number;
     test_size?: number;
+    holdout_test_metrics?: {
+      baseline_accuracy?: number;
+      baseline_f1_weighted?: number;
+      baseline_f1_macro?: number;
+      tuned_accuracy?: number;
+      tuned_f1_weighted?: number;
+      tuned_f1_macro?: number;
+      neg_threshold?: number;
+      selection_tier?: string;
+    };
+    manual_benchmark_metrics?: {
+      support?: number;
+      accuracy?: number;
+      f1_weighted?: number;
+      f1_macro?: number;
+      dataset?: string;
+      rule?: string;
+    };
     id2label?: Record<string, string>;
   };
 }

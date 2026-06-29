@@ -11,6 +11,8 @@ import InsightPanel from '@/components/results/InsightPanel';
 import SentimentBreakdown from '@/components/results/SentimentBreakdown';
 import TopNegativeComments from '@/components/results/TopNegativeComments';
 import ChannelOverviewCard from '@/components/results/ChannelOverviewCard';
+import ChannelInsightPanel from '@/components/results/ChannelInsightPanel';
+import RiskVideoTable from '@/components/results/RiskVideoTable';
 import { summarizeComments } from '@/utils/summarize';
 import type { ChannelAnalysisResponse, VideoAnalysisResponse } from '@/types/analysis';
 
@@ -49,6 +51,7 @@ export default function AnalysisResultView({ mode, result }: AnalysisResultViewP
       ) : null}
 
       {!isVideo && channelResult ? <ChannelOverviewCard result={channelResult} /> : null}
+      {!isVideo && channelResult ? <ChannelInsightPanel result={channelResult} /> : null}
 
       <SummaryCards total={derived?.total ?? total} dominantEmotion={derived?.dominantEmotion ?? 'neutral'} avgConfidence={derived?.avgConfidence ?? 0} />
       <SentimentBreakdown distribution={distribution} />
@@ -72,6 +75,8 @@ export default function AnalysisResultView({ mode, result }: AnalysisResultViewP
           <SentimentBars videos={channelResult.videos} />
         </Card>
       ) : null}
+
+      {!isVideo && channelResult ? <RiskVideoTable result={channelResult} /> : null}
 
       <Card title="Bình luận tiêu cực cần ưu tiên" className="section-card">
         <TopNegativeComments comments={comments} />

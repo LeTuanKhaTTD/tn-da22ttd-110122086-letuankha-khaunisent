@@ -1,4 +1,4 @@
-import { Button, Collapse, Descriptions, Row, Col, Space, Typography } from 'antd';
+import { Button, Collapse, Descriptions, Row, Col, Space, Tag, Typography } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
 import SummaryCards from './SummaryCards';
 import CommentTable from './CommentTable';
@@ -6,6 +6,7 @@ import Card from '@/components/ui/Card';
 import EmptyState from '@/components/ui/EmptyState';
 import { summarizeComments } from '@/utils/summarize';
 import { formatCount } from '@/utils/formatters';
+import { buildVideoRiskProfiles } from '@/utils/channelRisk';
 import type { ChannelVideoResult } from '@/types/analysis';
 
 interface VideoResultListProps {
@@ -32,11 +33,14 @@ export default function VideoResultList({ videos }: VideoResultListProps) {
     return <EmptyState title="Chưa có danh sách video" subtitle="Dữ liệu kênh sẽ hiển thị ở đây sau khi phân tích." />;
   }
 
+  const riskProfiles = buildVideoRiskProfiles(videos);
+
   return (
     <Collapse
       accordion={false}
       items={videos.map((video, index) => {
         const derived = summarizeComments(video.comments);
+        const risk = riskProfiles[index];
         const title = video.description || video.video_id || `Video ${index + 1}`;
         return {
           key: `${video.video_id}-${index}`,
@@ -46,6 +50,7 @@ export default function VideoResultList({ videos }: VideoResultListProps) {
               <Typography.Text type="secondary" ellipsis style={{ maxWidth: 820 }}>
                 {title}
               </Typography.Text>
+              {risk ? <Tag color={risk.riskColor}>Risk {risk.riskLabel} - {risk.negativePercent.toFixed(1)}% negative</Tag> : null}
             </Space>
           ),
           extra: (

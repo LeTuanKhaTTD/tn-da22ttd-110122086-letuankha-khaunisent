@@ -1,4 +1,4 @@
-import { BarChart2, BrainCircuit, Film, History, Home, NotebookPen, Settings, Tv } from 'lucide-react';
+﻿import { BarChart2, BrainCircuit, Film, History, Home, Settings, Sparkles, Tv } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
 const NAV_ITEMS = [
@@ -6,7 +6,7 @@ const NAV_ITEMS = [
   { label: 'Test model', icon: BrainCircuit, to: '/model-test' },
   { label: 'Phân tích video', icon: Film, to: '/video' },
   { label: 'Phân tích kênh', icon: Tv, to: '/channel' },
-  { label: 'Gán nhãn', icon: NotebookPen, to: '/labeling' },
+  { label: 'So sánh Gemini', icon: Sparkles, to: '/gemini-compare' },
   { label: 'Lịch sử', icon: History, to: '/history' },
   { label: 'Cài đặt', icon: Settings, to: '/settings' },
 ];
@@ -16,10 +16,10 @@ export default function Sidebar({ collapsed }) {
     <aside className={`app-sidebar flex h-screen flex-col ${collapsed ? 'w-20' : 'w-64'} transition-all duration-300`}>
       <div className="px-4 py-5">
         <div className="flex items-center gap-3">
-          <div className="brand-mark">TU</div>
+          <div className="brand-mark">KU</div>
           {!collapsed ? (
             <div className="min-w-0">
-              <p className="brand-title">TikUniSent</p>
+              <p className="brand-title">KhaUniSent</p>
               <p className="brand-subtitle">Phân tích cảm xúc TikTok cho kênh đại học</p>
             </div>
           ) : null}
@@ -63,7 +63,7 @@ export default function Sidebar({ collapsed }) {
       <div className="mt-auto border-t border-white/10 px-4 py-4 text-xs text-slate-400">
         {!collapsed ? (
           <div className="space-y-1">
-            <p className="font-semibold text-slate-200">TikUniSent v1.0.0</p>
+            <p className="font-semibold text-slate-200">KhaUniSent v1.0.0</p>
             <p>Backend FastAPI + PhoBERT</p>
           </div>
         ) : (
@@ -73,3 +73,4 @@ export default function Sidebar({ collapsed }) {
     </aside>
   );
 }
+

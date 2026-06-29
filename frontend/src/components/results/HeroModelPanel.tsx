@@ -9,7 +9,7 @@ interface HeroModelPanelProps {
 
 export default function HeroModelPanel({ health, feature }: HeroModelPanelProps) {
   const model = health?.model;
-  const trainSize = Number(model?.train_size ?? 0);
+  const datasetSize = Number(model?.dataset_size ?? 0);
 
   return (
     <div className="analysis-hero__panel">
@@ -29,8 +29,8 @@ export default function HeroModelPanel({ health, feature }: HeroModelPanelProps)
           <strong>{formatPercent(model?.test_f1_macro ?? 0)}</strong>
         </div>
         <div>
-          <span>Train</span>
-          <strong>{trainSize ? formatCount(trainSize) : '--'}</strong>
+          <span>Dataset</span>
+          <strong>{datasetSize ? formatCount(datasetSize) : '--'}</strong>
         </div>
         <div>
           <span>Device</span>

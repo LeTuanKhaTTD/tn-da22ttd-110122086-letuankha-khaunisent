@@ -7,7 +7,7 @@ import OverviewPage from '@/pages/overview/OverviewPage';
 import ModelTestPage from '@/pages/ModelTestPage';
 import VideoAnalyzePage from '@/pages/analyze/VideoAnalyzePage';
 import ChannelAnalyzePage from '@/pages/analyze/ChannelAnalyzePage';
-import LabelingPage from '@/pages/LabelingPage';
+import GeminiComparePage from '@/pages/GeminiComparePage';
 import HistoryPage from '@/pages/HistoryPage';
 import HistoryDetailPage from '@/pages/HistoryDetailPage';
 import SettingsPage from '@/pages/SettingsPage';
@@ -26,8 +26,8 @@ function usePageMeta() {
     if (location.pathname.startsWith('/channel')) {
       return { title: 'Phân tích kênh', breadcrumbs: ['Trang chủ', 'Phân tích kênh'] };
     }
-    if (location.pathname.startsWith('/labeling')) {
-      return { title: 'Gán nhãn bình luận', breadcrumbs: ['Trang chủ', 'Gán nhãn'] };
+    if (location.pathname.startsWith('/gemini-compare')) {
+      return { title: 'So sánh Gemini', breadcrumbs: ['Trang chủ', 'So sánh Gemini'] };
     }
     if (location.pathname.startsWith('/history')) {
       return { title: 'Lịch sử phân tích', breadcrumbs: ['Trang chủ', 'Lịch sử'] };
@@ -61,7 +61,7 @@ function Layout() {
             <Route path="/model-test" element={<ModelTestPage />} />
             <Route path="/video" element={<VideoAnalyzePage />} />
             <Route path="/channel" element={<ChannelAnalyzePage />} />
-            <Route path="/labeling" element={<LabelingPage />} />
+            <Route path="/gemini-compare" element={<GeminiComparePage />} />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/history/:id" element={<HistoryDetailPage />} />
             <Route path="/settings" element={<SettingsPage />} />

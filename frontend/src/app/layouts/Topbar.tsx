@@ -1,4 +1,4 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, ReloadOutlined } from '@ant-design/icons';
+﻿import { MenuFoldOutlined, MenuUnfoldOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Space, Tag, Typography } from 'antd';
 import type { HealthResponse } from '@/types/health';
 import { useUiStore } from '@/store/useUiStore';
@@ -50,7 +50,7 @@ export default function Topbar({ health, loading = false }: TopbarProps) {
             <div>
               <Typography.Text className="topbar-eyebrow">Sentiment analytics suite</Typography.Text>
               <Typography.Title level={4} className="topbar-title">
-                TikUniSent
+                KhaUniSent
               </Typography.Title>
               <Typography.Text type="secondary" className="topbar-subtitle">
                 Dashboard phân tích cảm xúc bình luận TikTok tiếng Việt
@@ -68,3 +68,4 @@ export default function Topbar({ health, loading = false }: TopbarProps) {
     </div>
   );
 }
+

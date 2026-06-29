@@ -68,6 +68,22 @@ export interface ChannelVideoResult {
 
 export interface ChannelAnalysisResponse {
   videos: ChannelVideoResult[];
+  analysis_scope?: {
+    requested_max_videos?: number;
+    requested_comments_per_video?: number;
+    videos_analyzed?: number;
+    metadata_videos_collected?: number;
+    comments_analyzed?: number;
+    declared_comments_in_selected_videos?: number;
+    total_views_in_selected_videos?: number;
+    total_likes_in_selected_videos?: number;
+    total_shares_in_selected_videos?: number;
+    total_saves_in_selected_videos?: number;
+    total_views_in_channel_videos?: number;
+    total_likes_in_channel_videos?: number;
+    total_shares_in_channel_videos?: number;
+    total_saves_in_channel_videos?: number;
+  };
   channel_info?: {
     username?: string;
     display_name?: string;
@@ -78,6 +94,7 @@ export interface ChannelAnalysisResponse {
     following?: number;
     likes?: number;
     posts_analyzed?: number;
+    posts_collected?: number;
     total_views?: number;
     total_likes?: number;
     total_shares?: number;

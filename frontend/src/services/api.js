@@ -118,6 +118,15 @@ export async function analyzeComment(textOrPayload) {
 }
 
 /**
+ * @param {{texts: string[], gemini_model?: string}} payload
+ * @returns {Promise<any>}
+ */
+export async function compareGemini(payload) {
+  const response = await api.post(API_ENDPOINTS.COMPARE_GEMINI, payload, { timeout: 180000 });
+  return unwrapApiResponse(response.data);
+}
+
+/**
  * @returns {Promise<any>}
  */
 export async function getLabelQueue() {

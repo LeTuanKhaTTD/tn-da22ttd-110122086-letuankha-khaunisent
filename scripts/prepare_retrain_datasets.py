@@ -14,10 +14,19 @@ import json
 from collections import Counter
 from pathlib import Path
 
-from sklearn.model_selection import train_test_split
-
 
 VALID_SENTIMENTS = {"positive", "neutral", "negative"}
+
+
+def stratified_split_count(labels: list[str], first_ratio: float) -> tuple[int, int]:
+    first = 0
+    second = 0
+    for label in set(labels):
+        size = labels.count(label)
+        label_first = round(size * first_ratio)
+        first += label_first
+        second += size - label_first
+    return first, second
 
 
 def load_comments(source_path: Path) -> tuple[list[dict], str]:
@@ -96,22 +105,10 @@ def clean_all_labeled(comments: list[dict]) -> tuple[list[dict], Counter]:
 
 def expected_split_sizes(comments: list[dict]) -> dict[str, int]:
     labels = [str(c.get("sentiment", "")).strip().lower() for c in comments]
-    x = list(range(len(labels)))
-
-    x_train, x_temp, y_train, y_temp = train_test_split(
-        x,
-        labels,
-        test_size=0.30,
-        random_state=42,
-        stratify=labels,
-    )
-    x_val, x_test = train_test_split(
-        x_temp,
-        test_size=0.50,
-        random_state=42,
-        stratify=y_temp,
-    )
-    return {"train": len(x_train), "val": len(x_val), "test": len(x_test)}
+    train, temp = stratified_split_count(labels, 0.70)
+    val = round(temp * 0.50)
+    test = temp - val
+    return {"train": train, "val": val, "test": test}
 
 
 def save_dataset(out_path: Path, comments: list[dict], source_path: Path, mode: str, skipped: Counter) -> None:

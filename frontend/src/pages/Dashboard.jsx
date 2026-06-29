@@ -1,4 +1,4 @@
-import { Activity, BarChart2, MessageCircle, Users } from 'lucide-react';
+﻿import { Activity, BarChart2, MessageCircle, Users } from 'lucide-react';
 import Card from '@/components/shared/Card';
 import Badge from '@/components/shared/Badge';
 import { useDashboardStats, useHealth } from '@/hooks/useAnalysis';
@@ -71,7 +71,7 @@ export default function Dashboard() {
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="flex flex-col gap-2">
             <p className="text-sm text-slate-500">Chào mừng đến với</p>
-            <h2 className="text-2xl font-semibold text-slate-800">TikUniSent Dashboard</h2>
+            <h2 className="text-2xl font-semibold text-slate-800">KhaUniSent Dashboard</h2>
             <p className="text-sm text-slate-500">
               Hệ thống phân tích cảm xúc bình luận TikTok tiếng Việt, ưu tiên dữ liệu thật và khả năng vận hành ổn định.
             </p>
@@ -150,3 +150,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

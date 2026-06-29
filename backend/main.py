@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import traceback
 from pathlib import Path
 
@@ -12,6 +13,7 @@ from pydantic import BaseModel, Field
 
 from backend.app.utils.response import error_response, success_response
 from backend.crawler import ApifyError, crawl_channel_comments, crawl_video_details
+from backend.gemini_compare import compare_comments_with_gemini
 from backend.labeling_store import (
     apply_model_prelabels,
     export_train_dataset,
@@ -21,12 +23,12 @@ from backend.labeling_store import (
     save_label_queue,
     build_label_queue,
 )
-from backend.sentiment import analyze_batch, get_model_info, load_model, summarize
+from backend.sentiment import analyze_batch, analyze_batch_with_timings, get_model_info, load_model, summarize
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 WORKSPACE_ROOT = PROJECT_ROOT.parent
-load_dotenv(PROJECT_ROOT / '.env', override=False)
-load_dotenv(WORKSPACE_ROOT / '.env', override=False)
+load_dotenv(PROJECT_ROOT / '.env', override=False, encoding='utf-8-sig')
+load_dotenv(WORKSPACE_ROOT / '.env', override=False, encoding='utf-8-sig')
 
 app = FastAPI(title='TikUniSent API')
 
@@ -41,6 +43,16 @@ model_loaded = False
 model_device = 'cpu'
 model_mode = 'phobert'
 gemini_enabled = False
+
+
+def reload_runtime_model() -> dict:
+    global model_loaded, model_device, model_mode, gemini_enabled
+    info = load_model()
+    model_loaded = True
+    model_device = info.get('device', 'cpu')
+    model_mode = info.get('model_mode', 'phobert')
+    gemini_enabled = bool(info.get('gemini_enabled', False))
+    return info
 
 
 @app.exception_handler(HTTPException)
@@ -81,6 +93,11 @@ class CommentRequest(BaseModel):
     model: str = Field('phobert', pattern='^(phobert|auto|gemini)$')
 
 
+class GeminiCompareRequest(BaseModel):
+    texts: list[str] = Field(..., min_length=1, max_length=10)
+    gemini_model: str = Field('', min_length=0, max_length=80)
+
+
 class LabelQueueRequest(BaseModel):
     metadata: dict = Field(default_factory=dict)
     comments: list[dict] = Field(default_factory=list)
@@ -108,6 +125,22 @@ def resolve_apify_token(request_token: str) -> str:
     if env_token:
         return env_token
     raise HTTPException(status_code=500, detail='Thiếu APIFY_API_TOKEN trong .env của backend')
+
+
+def build_timings(
+    crawl_seconds: float,
+    preprocess_seconds: float,
+    inference_seconds: float,
+    aggregation_seconds: float,
+    total_seconds: float,
+) -> dict:
+    return {
+        'crawl_seconds': round(crawl_seconds, 4),
+        'preprocess_seconds': round(preprocess_seconds, 4),
+        'inference_seconds': round(inference_seconds, 4),
+        'aggregation_seconds': round(aggregation_seconds, 4),
+        'total_seconds': round(total_seconds, 4),
+    }
 
 
 def load_dashboard_stats() -> dict:
@@ -167,13 +200,9 @@ def load_dashboard_stats() -> dict:
 
 @app.on_event('startup')
 async def startup_event():
-    global model_loaded, model_device, model_mode, gemini_enabled
+    global model_loaded
     try:
-        info = load_model()
-        model_loaded = True
-        model_device = info.get('device', 'cpu')
-        model_mode = info.get('model_mode', 'gemini')
-        gemini_enabled = bool(info.get('gemini_enabled', False))
+        reload_runtime_model()
     except Exception as e:
         model_loaded = False
         print(f'Khởi tạo model thất bại: {e}')
@@ -197,6 +226,15 @@ async def health():
     })
 
 
+@app.post('/admin/reload-model')
+async def reload_model_endpoint():
+    try:
+        info = reload_runtime_model()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f'Không thể tải lại model: {e}') from e
+    return success_response({'message': 'Đã tải lại model PhoBERT', 'model': info})
+
+
 @app.get('/stats')
 async def stats():
     return success_response(load_dashboard_stats())
@@ -204,6 +242,7 @@ async def stats():
 
 @app.post('/analyze/video')
 async def analyze_video(request: VideoRequest):
+    total_started = time.perf_counter()
     if not model_loaded:
         raise HTTPException(status_code=503, detail='Model chưa được load')
 
@@ -216,7 +255,9 @@ async def analyze_video(request: VideoRequest):
     apify_token = resolve_apify_token(request.apify_token)
 
     try:
+        crawl_started = time.perf_counter()
         video_data = await crawl_video_details(request.url, apify_token, request.max_comments)
+        crawl_seconds = time.perf_counter() - crawl_started
         comments = video_data.get('comments', [])
     except ApifyError as e:
         message = str(e)
@@ -226,13 +267,16 @@ async def analyze_video(request: VideoRequest):
         raise HTTPException(status_code=504, detail=f'Crawl timeout hoặc lỗi Apify: {e}')
 
     try:
-        analyzed = analyze_batch(comments, request.model)
+        analyzed, sentiment_timings = analyze_batch_with_timings(comments, request.model)
+        aggregation_started = time.perf_counter()
         summary = summarize(analyzed)
+        aggregation_seconds = time.perf_counter() - aggregation_started
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Lỗi phân tích sentiment')
 
     model_used = analyzed[0].get('method', request.model) if analyzed else request.model
+    total_seconds = time.perf_counter() - total_started
 
     return success_response({
         'status': 'success',
@@ -242,11 +286,19 @@ async def analyze_video(request: VideoRequest):
         'summary': summary,
         'details': analyzed,
         'model_used': model_used,
+        'timings': build_timings(
+            crawl_seconds,
+            sentiment_timings.get('preprocess_seconds', 0.0),
+            sentiment_timings.get('inference_seconds', 0.0),
+            aggregation_seconds,
+            total_seconds,
+        ),
     })
 
 
 @app.post('/analyze/channel')
 async def analyze_channel(request: ChannelRequest):
+    total_started = time.perf_counter()
     if not model_loaded:
         raise HTTPException(status_code=503, detail='Model chưa được load')
 
@@ -255,12 +307,14 @@ async def analyze_channel(request: ChannelRequest):
 
     try:
         apify_token = resolve_apify_token(request.apify_token)
+        crawl_started = time.perf_counter()
         channel_data = await crawl_channel_comments(
             request.username,
             apify_token,
             request.max_videos,
             request.comments_per_video,
         )
+        crawl_seconds = time.perf_counter() - crawl_started
     except ApifyError as e:
         message = str(e)
         status = 404 if 'không có dữ liệu local' in message.lower() else 502
@@ -271,10 +325,20 @@ async def analyze_channel(request: ChannelRequest):
     try:
         overall_comments = []
         videos_result = []
+        preprocess_seconds = 0.0
+        inference_seconds = 0.0
+        aggregation_seconds = 0.0
 
         for video in channel_data.get('videos', []):
             comments = video.get('comments', [])
-            analyzed = analyze_batch(comments, request.model) if comments else []
+            if comments:
+                analyzed, sentiment_timings = analyze_batch_with_timings(comments, request.model)
+                preprocess_seconds += sentiment_timings.get('preprocess_seconds', 0.0)
+                inference_seconds += sentiment_timings.get('inference_seconds', 0.0)
+            else:
+                analyzed = []
+                sentiment_timings = {}
+            summary_started = time.perf_counter()
             summary = summarize(analyzed) if comments else {
                 'total': 0,
                 'positive': {'count': 0, 'percent': 0.0},
@@ -284,6 +348,7 @@ async def analyze_channel(request: ChannelRequest):
                 'top_positive': [],
                 'top_negative': [],
             }
+            aggregation_seconds += time.perf_counter() - summary_started
 
             videos_result.append({
                 'video_id': video.get('video_id'),
@@ -305,28 +370,56 @@ async def analyze_channel(request: ChannelRequest):
             })
             overall_comments.extend(analyzed)
 
+        overall_started = time.perf_counter()
         overall_summary = summarize(overall_comments)
+        aggregation_seconds += time.perf_counter() - overall_started
 
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Lỗi phân tích sentiment')
 
     model_used = overall_comments[0].get('method', request.model) if overall_comments else request.model
+    channel_info = channel_data.get('channel_info', {})
+    total_seconds = time.perf_counter() - total_started
 
     return success_response({
         'status': 'success',
         'username': request.username,
-        'channel_info': channel_data.get('channel_info', {}),
+        'channel_info': channel_info,
+        'analysis_scope': {
+            'requested_max_videos': request.max_videos,
+            'requested_comments_per_video': request.comments_per_video,
+            'videos_analyzed': channel_data.get('total_videos', 0),
+            'metadata_videos_collected': channel_data.get('metadata_videos_collected', 0),
+            'comments_analyzed': len(overall_comments),
+            'declared_comments_in_selected_videos': channel_info.get('total_declared_comments', 0),
+            'total_views_in_selected_videos': channel_info.get('total_views', 0),
+            'total_likes_in_selected_videos': channel_info.get('total_likes', 0),
+            'total_shares_in_selected_videos': channel_info.get('total_shares', 0),
+            'total_saves_in_selected_videos': channel_info.get('total_saves', 0),
+            'total_views_in_channel_videos': channel_info.get('total_views', 0),
+            'total_likes_in_channel_videos': channel_info.get('total_likes', 0),
+            'total_shares_in_channel_videos': channel_info.get('total_shares', 0),
+            'total_saves_in_channel_videos': channel_info.get('total_saves', 0),
+        },
         'total_videos': channel_data.get('total_videos', 0),
         'total_comments': channel_data.get('total_comments', 0),
         'overall_summary': overall_summary,
         'videos': videos_result,
         'model_used': model_used,
+        'timings': build_timings(
+            crawl_seconds,
+            preprocess_seconds,
+            inference_seconds,
+            aggregation_seconds,
+            total_seconds,
+        ),
     })
 
 
 @app.post('/analyze/comment')
 async def analyze_comment(request: CommentRequest):
+    total_started = time.perf_counter()
     if not model_loaded:
         raise HTTPException(status_code=503, detail='Model chưa được load')
 
@@ -338,18 +431,47 @@ async def analyze_comment(request: CommentRequest):
         raise HTTPException(status_code=400, detail='Comment không được để trống')
 
     try:
-        analyzed = analyze_batch([text], request.model)
+        analyzed, sentiment_timings = analyze_batch_with_timings([text], request.model)
+        aggregation_started = time.perf_counter()
+        _ = summarize(analyzed)
+        aggregation_seconds = time.perf_counter() - aggregation_started
     except Exception:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail='Lỗi phân tích comment bằng PhoBERT')
 
     result = analyzed[0] if analyzed else {}
+    total_seconds = time.perf_counter() - total_started
     return success_response({
         'status': 'success',
         'input_text': text,
         'result': result,
         'model_used': result.get('method', request.model),
+        'timings': build_timings(
+            0.0,
+            sentiment_timings.get('preprocess_seconds', 0.0),
+            sentiment_timings.get('inference_seconds', 0.0),
+            aggregation_seconds,
+            total_seconds,
+        ),
     })
+
+
+@app.post('/compare/gemini')
+async def compare_gemini(request: GeminiCompareRequest):
+    if not model_loaded:
+        raise HTTPException(status_code=503, detail='Model chưa được load')
+
+    try:
+        result = compare_comments_with_gemini(request.texts, request.gemini_model)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail='Lỗi so sánh PhoBERT với Gemini')
+
+    return success_response(result)
 
 
 @app.get('/labeling/queue')

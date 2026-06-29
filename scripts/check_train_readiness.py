@@ -10,10 +10,9 @@ Muc tieu:
 from __future__ import annotations
 
 import json
+import random
 from collections import Counter
 from pathlib import Path
-
-from sklearn.model_selection import train_test_split
 
 DATA_FILE = Path("data/tong_hop_comment.json")
 NOTEBOOK_FILE = Path("phobert_finetune.ipynb")
@@ -73,6 +72,24 @@ def format_dist(counter: Counter) -> str:
     return ", ".join(ordered + extras)
 
 
+def stratified_split(labels: list[str], first_ratio: float, seed: int) -> tuple[list[str], list[str]]:
+    grouped: dict[str, list[str]] = {}
+    rng = random.Random(seed)
+    for label in labels:
+        grouped.setdefault(label, []).append(label)
+
+    first: list[str] = []
+    second: list[str] = []
+    for label, values in grouped.items():
+        rng.shuffle(values)
+        split_at = round(len(values) * first_ratio)
+        first.extend(values[:split_at])
+        second.extend(values[split_at:])
+    rng.shuffle(first)
+    rng.shuffle(second)
+    return first, second
+
+
 def main() -> None:
     if not DATA_FILE.exists():
         raise FileNotFoundError(f"Missing data file: {DATA_FILE}")
@@ -121,26 +138,13 @@ def main() -> None:
         return
 
     # Stratified split preview
-    texts = [str(c.get("text", "")) for c in trainable]
     y = [normalize_sentiment(c.get("sentiment")) for c in trainable]
 
-    x_train, x_temp, y_train, y_temp = train_test_split(
-        texts,
-        y,
-        test_size=0.30,
-        random_state=SEED,
-        stratify=y,
-    )
-    x_val, x_test, y_val, y_test = train_test_split(
-        x_temp,
-        y_temp,
-        test_size=0.50,
-        random_state=SEED,
-        stratify=y_temp,
-    )
+    y_train, y_temp = stratified_split(y, 0.70, SEED)
+    y_val, y_test = stratified_split(y_temp, 0.50, SEED)
 
     print("\nSplit preview (stratified):")
-    print(f"  Train={len(x_train)}, Val={len(x_val)}, Test={len(x_test)}")
+    print(f"  Train={len(y_train)}, Val={len(y_val)}, Test={len(y_test)}")
     print(f"  Train dist: {format_dist(Counter(y_train))}")
     print(f"  Val dist  : {format_dist(Counter(y_val))}")
     print(f"  Test dist : {format_dist(Counter(y_test))}")

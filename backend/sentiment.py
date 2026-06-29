@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from pathlib import Path
 from typing import Any
 
@@ -105,15 +106,36 @@ def load_model() -> dict[str, Any]:
         "model_path": str(model_path),
         "model_name": metadata.get("model_name", "vinai/phobert-base"),
         "fine_tuned_on": metadata.get("fine_tuned_on", ""),
+        "train_sources": metadata.get("train_sources", []),
+        "dataset_size": _infer_dataset_size(metadata),
+        "max_len": metadata.get("max_len"),
+        "epochs": metadata.get("epochs"),
         "best_val_macro_f1": metadata.get("best_val_macro_f1"),
         "test_accuracy": metadata.get("test_accuracy"),
+        "test_f1_weighted": metadata.get("test_f1_weighted"),
         "test_f1_macro": metadata.get("test_f1_macro"),
         "train_size": metadata.get("train_size"),
         "val_size": metadata.get("val_size"),
         "test_size": metadata.get("test_size"),
+        "holdout_test_metrics": metadata.get("holdout_test_metrics", {}),
+        "manual_benchmark_metrics": metadata.get("manual_benchmark_metrics", {}),
         "id2label": _id2label,
     }
     return _model_info
+
+
+def _infer_dataset_size(metadata: dict[str, Any]) -> int | None:
+    """Suy ra tổng số mẫu fine-tune từ metadata hoặc tên file dataset."""
+    total = sum(
+        int(metadata.get(key) or 0)
+        for key in ("train_size", "val_size", "test_size")
+    )
+    if total:
+        return total
+
+    fine_tuned_on = str(metadata.get("fine_tuned_on", ""))
+    digits = "".join(ch if ch.isdigit() else " " for ch in fine_tuned_on).split()
+    return int(digits[-1]) if digits else None
 
 
 def get_model_info() -> dict[str, Any]:
@@ -122,13 +144,27 @@ def get_model_info() -> dict[str, Any]:
 
 
 def _predict_phobert(comments: list[Any]) -> list[dict[str, Any]]:
+    results, _ = _predict_phobert_with_timings(comments)
+    return results
+
+
+def _predict_phobert_with_timings(comments: list[Any]) -> tuple[list[dict[str, Any]], dict[str, float]]:
     if _phobert is None or _tokenizer is None:
         raise RuntimeError("PhoBERT chưa được load")
 
+    total_started = time.perf_counter()
+    timings = {
+        "preprocess_seconds": 0.0,
+        "inference_seconds": 0.0,
+    }
     results = []
     for start in range(0, len(comments), BATCH_SIZE):
         originals = comments[start:start + BATCH_SIZE]
+        preprocess_started = time.perf_counter()
         cleaned = [_clean_text(text) for text in originals]
+        timings["preprocess_seconds"] += time.perf_counter() - preprocess_started
+
+        inference_started = time.perf_counter()
         encoded = _tokenizer(
             cleaned,
             max_length=MAX_SEQUENCE_LENGTH,
@@ -141,6 +177,7 @@ def _predict_phobert(comments: list[Any]) -> list[dict[str, Any]]:
         with torch.no_grad():
             logits = _phobert(**encoded).logits
             probs_batch = F.softmax(logits, dim=1).cpu().tolist()
+        timings["inference_seconds"] += time.perf_counter() - inference_started
 
         for original, clean, probs in zip(originals, cleaned, probs_batch):
             pred_idx = int(max(range(len(probs)), key=lambda idx: probs[idx]))
@@ -159,15 +196,22 @@ def _predict_phobert(comments: list[Any]) -> list[dict[str, Any]]:
                 "method": "phobert",
             })
 
-    return results
+    timings["sentiment_total_seconds"] = time.perf_counter() - total_started
+    return results, timings
 
 
 def analyze_batch(comments: list[Any], model_preference: str = "phobert") -> list[dict[str, Any]]:
     """Phân tích batch comment. PhoBERT là model chính."""
+    results, _ = analyze_batch_with_timings(comments, model_preference)
+    return results
+
+
+def analyze_batch_with_timings(comments: list[Any], model_preference: str = "phobert") -> tuple[list[dict[str, Any]], dict[str, float]]:
+    """Phân tích batch comment và trả về thời gian tiền xử lý/suy luận."""
     preference = (model_preference or "phobert").strip().lower()
     if preference == "gemini":
         raise RuntimeError("Gemini chỉ dùng cho đánh giá/so sánh, không phải luồng phân tích chính")
-    return _predict_phobert(comments)
+    return _predict_phobert_with_timings(comments)
 
 
 def summarize(results: list[dict[str, Any]]) -> dict[str, Any]:
