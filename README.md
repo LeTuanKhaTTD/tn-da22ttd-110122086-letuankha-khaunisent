@@ -6,8 +6,6 @@
 - MSSV: **110122086**
 - Trường: **Đại học Trà Vinh - Khoa Công nghệ thông tin**
 - Năm thực hiện: **2026**
-- Tên repository đề xuất: `tn-da22tta-110122086-letuankha-khaunisent`
-
 
 ## 1. Giới thiệu
 
