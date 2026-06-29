@@ -1,6 +1,6 @@
 ﻿# KhaUniSent
 
-**Hệ thống nhận diện cảm xúc bình luận TikTok tiếng Việt bằng PhoBERT fine-tuning**
+**Hệ thống nhận diện cảm xúc từ văn bản tiếng Việt bằng mô hình NLP**
 
 - Sinh viên thực hiện: **Lê Tuấn Kha**
 - MSSV: **110122086**
@@ -8,7 +8,6 @@
 - Năm thực hiện: **2026**
 - Tên repository đề xuất: `tn-da22tta-110122086-letuankha-khaunisent`
 
-> Nếu mã lớp chính thức khác `da22tta`, cần đổi phần mã lớp trong tên repository trước khi nộp.
 
 ## 1. Giới thiệu
 
